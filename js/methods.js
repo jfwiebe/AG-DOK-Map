@@ -5,9 +5,9 @@ function initMap() {
 	var myIcon = L.ExtraMarkers.icon({
 		icon: 'fa-play-circle',
 		svg: true,
-	    markerColor: '#5c878d',
-	    shape: 'circle',
-	    prefix: 'fa'
+		markerColor: '#5c878d',
+		shape: 'circle',
+		prefix: 'fa'
 	});
 
 	var myFilter = [
@@ -25,23 +25,24 @@ function initMap() {
 	];
 
 	var myGeoJSONPath = './world.geo.json';
-    var myCustomStyle = {
-        stroke: true,
-        color: '#6f7f8c',
-        weight: 1,
-        fill: true,
-        fillColor: '#1e2b37',
-        fillOpacity: 0.4
-    };
+	var myCustomStyle = {
+		stroke: true,
+		color: '#6f7f8c',
+		weight: 1,
+		fill: true,
+		fillColor: '#1e2b37',
+		fillOpacity: 0.4
+	};
 
 	getSheetData('1f4UpOnOj79hGxeu5AoDrkKRRD2RGxM9rEmwAhIw2XMM', function(sheetData) {
 
 		console.log(sheetData);
 
 		mapData = sheetData;
+		// Tags are already converted to an Array at mapData[0].tags
 		
 		$.getJSON(myGeoJSONPath,function(data){
-	        map = L.map( 'filmClipMap', {
+			map = L.map( 'filmClipMap', {
 				center: [20.0, 5.0],
 				minZoom: 2,
 				zoom: 2
@@ -52,12 +53,12 @@ function initMap() {
 				filter: myFilter
 			}).addTo(map);
 
-	        L.geoJson(data, {
-	            clickable: false,
-	            style: myCustomStyle
-	        }).addTo(map);
+			L.geoJson(data, {
+				clickable: false,
+				style: myCustomStyle
+			}).addTo(map);
 
-	        var markers = L.markerClusterGroup();
+			var markers = L.markerClusterGroup();
 				
 			for ( var i=0; i < mapData.length; ++i ) {
 				var marker = L.marker( [mapData[i].latitude, mapData[i].longitude], {icon: myIcon} );
@@ -75,7 +76,7 @@ function initMap() {
 			}
 
 			map.addLayer(markers);
-	    });
+		});
 	});
 	
 	
