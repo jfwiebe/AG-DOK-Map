@@ -10,28 +10,14 @@ function initMap() {
 		prefix: 'fa'
 	});
 
-	var myFilter = [
-		/*
-		'blur:0px',
-		'opacity:100%',
-		'sepia:0%',
-		*/
-		'brightness:90%',
-		'contrast:100%',
-		'hue:210deg',
-		'saturate:30%',
-		'grayscale:0%',
-		'invert:100%'
-	];
-
 	var myGeoJSONPath = './world.geo.json';
 	var myCustomStyle = {
 		stroke: true,
 		color: '#6f7f8c',
 		weight: 1,
 		fill: true,
-		fillColor: '#1e2b37',
-		fillOpacity: 0.4
+		fillColor: '#232a2c',
+		fillOpacity: 1
 	};
 
 	getSheetData('1f4UpOnOj79hGxeu5AoDrkKRRD2RGxM9rEmwAhIw2XMM', function(sheetData) {
@@ -43,14 +29,19 @@ function initMap() {
 		
 		$.getJSON(myGeoJSONPath,function(data){
 			map = L.map( 'filmClipMap', {
-				center: [20.0, 5.0],
-				minZoom: 2,
-				zoom: 2
+				center: [51.0, 10.0],
+				minZoom: 3,
+				maxZoom: 8,
+				zoom: 6
 			});
 
-			var myTileLayer = L.tileLayer.colorFilter('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-				attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
-				filter: myFilter
+			map.createPane('labels');
+			map.getPane('labels').style.pointerEvents = 'none';
+
+			var myTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', {
+				attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+				subdomains: 'abcd',
+				pane: 'labels'
 			}).addTo(map);
 
 			L.geoJson(data, {
