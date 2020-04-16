@@ -34,6 +34,15 @@ section {
 	background: #38434C;
 }
 
+.markerTag {
+	background: #5c878d;
+	color: #fff;
+	padding: 3px 6px;
+	border-radius: 3px;
+	margin: 0 3px 3px 0;
+	display: inline-block;
+}
+
 .leaflet-container {
 	font-family: 'Open Sans';
 }
@@ -41,10 +50,15 @@ section {
 .leaflet-popup-content-wrapper, .leaflet-popup-tip {
 	background: #fff;
 	color: #2f3c48;
+	border-radius: 4px;
+}
+
+.leaflet-popup-close-button {
+	display: none;
 }
 
 .leaflet-popup-content {
-	
+	margin: 6px;
 }
 
 .leaflet-popup-content-wrapper a, 
@@ -52,6 +66,20 @@ section {
 .leaflet-popup-content-wrapper a:focus {
 	color: #5c878d;
 	text-decoration: underline;
+}
+
+.leaflet-popup-content .tagListContainer {
+	margin-top: 4px;
+}
+
+.leaflet-popup-content .markerTitle {
+	width: 350px;
+	box-sizing: border-box;
+	padding: 4px 6px;
+	font-size: 15px;
+	background: #2f3c48;
+	color: #fff;
+	font-weight: 200;
 }
 
 .lds-ring {

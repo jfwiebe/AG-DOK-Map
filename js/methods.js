@@ -51,14 +51,21 @@ function initMap() {
 
 			var markers = L.markerClusterGroup();
 				
-			for ( var i=0; i < mapData.length; ++i ) {
+			for (var i=0; i < mapData.length; ++i) {
 				var marker = L.marker( [mapData[i].latitude, mapData[i].longitude], {icon: myIcon} );
 
-				marker.bindPopup('<div>'+ mapData[i].title + '</div>'
+				var tagList = '';
+
+				for (var t=0; t < mapData[i].tags.length; t++) {
+					tagList += '<span class="markerTag">'+ mapData[i].tags[t] +'</span>'
+				} 
+
+				marker.bindPopup('<div class="markerTitle">'+ mapData[i].title + '</div>'
 								+'<iframe style="width: 350px; height: 200px; background: #000;" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen src="'+ mapData[i].videoEmbedURL +'?color=ffffff&portrait=0&byline=0&title=0&badge=0"></iframe>'
 								+'<div><a href="'+ mapData[i].videoURL +'" target="_blank">Video in neuem Tab ansehen</a></div>'
 								+'<div>von '+ mapData[i].name +'</div>'
-								+'<div>Ort: '+ mapData[i].location +'</div>', {
+								+'<div>Ort: '+ mapData[i].location +'</div>'
+								+'<div class="tagListContainer">Tags: <br>'+ tagList +'</div>', {
 					minWidth: 200,
 					maxWidth: 350,
 					maxHeight: 600
