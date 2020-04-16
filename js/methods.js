@@ -67,6 +67,8 @@ function initMap() {
 			}
 
 			map.addLayer(markers);
+
+			$('.lds-ring').hide();
 		});
 	});
 	
