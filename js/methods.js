@@ -22,7 +22,7 @@ function initMap() {
 
 	getSheetData('1f4UpOnOj79hGxeu5AoDrkKRRD2RGxM9rEmwAhIw2XMM', function(sheetData) {
 
-		console.log(sheetData);
+		//console.log(sheetData);
 
 		mapData = sheetData;
 		// Tags are already converted to an Array at mapData[0].tags
@@ -50,14 +50,22 @@ function initMap() {
 			}).addTo(map);
 
 			var markers = L.markerClusterGroup();
+			var listOfAllTags = [];
 				
 			for (var i=0; i < mapData.length; ++i) {
-				var marker = L.marker( [mapData[i].latitude, mapData[i].longitude], {icon: myIcon} );
+				var marker = L.marker( [mapData[i].latitude, mapData[i].longitude], {
+					icon: myIcon,
+					tags: mapData[i].tags
+				});
 
 				var tagList = '';
 
 				for (var t=0; t < mapData[i].tags.length; t++) {
-					tagList += '<span class="markerTag">'+ mapData[i].tags[t] +'</span>'
+					tagList += '<span class="markerTag">'+ mapData[i].tags[t] +'</span>';
+
+					if (listOfAllTags.indexOf(mapData[i].tags[t]) == -1) {
+						listOfAllTags.push(mapData[i].tags[t]);
+					}
 				} 
 
 				marker.bindPopup('<div class="markerTitle">'+ mapData[i].title + '</div>'
@@ -73,7 +81,19 @@ function initMap() {
 				marker.addTo(markers);
 			}
 
+			tagFilterButton = L.control.tagFilterButton({
+				data: listOfAllTags,
+				filterOnEveryClick: true,
+				clearText: 'Alle anzeigen',
+				icon: 'fa-tag'
+			}).addTo( map );
+
 			map.addLayer(markers);
+
+			tagFilterButton.enableMCG(markers);
+
+			L.DomEvent.disableScrollPropagation(tagFilterButton._container);
+			L.DomEvent.disableClickPropagation(tagFilterButton._container);
 
 			$('.lds-ring').hide();
 		});
@@ -115,5 +135,199 @@ function getSheetData(sheetID, callback) {
 		}
 
 		callback(cleanData);
+	});
+}
+
+function fixMCG() {
+	L.Control.TagFilterButton.include({
+		// Goal: read from MCG instead of from _map
+		enableMCG: function(mcgInstance) {
+			this.registerCustomSource({
+				name: 'mcg',
+				source: {
+					mcg: mcgInstance,
+					hide: function(layerSource) {
+						var releatedLayers = [];
+
+						for (
+							var r = 0; r < this._releatedFilterButtons.length; r++
+						) {
+							releatedLayers = releatedLayers.concat(
+								this._releatedFilterButtons[r].getInvisibles()
+							);
+						}
+
+						var toBeRemovedFromInvisibles = [],
+							i,
+							toAdd = [];
+
+						for (var i = 0; i < this._invisibles.length; i++) {
+							if (releatedLayers.indexOf(this._invisibles[i]) == -1) {
+								for (
+									var j = 0; j < this._invisibles[i].options.tags.length; j++
+								) {
+									if (
+										this._selectedTags.length == 0 ||
+										this._selectedTags.indexOf(
+											this._invisibles[i].options.tags[j]
+										) !== -1
+									) {
+										//this._map.addLayer(this._invisibles[i]);
+										toAdd.push(this._invisibles[i]);
+										toBeRemovedFromInvisibles.push(i);
+										break;
+									}
+								}
+							}
+						}
+
+						// Batch add into MCG
+						layerSource.mcg.addLayers(toAdd);
+
+						while (toBeRemovedFromInvisibles.length > 0) {
+							this._invisibles.splice(
+								toBeRemovedFromInvisibles.pop(),
+								1
+							);
+						}
+
+						var removedMarkers = [];
+						var totalCount = 0;
+
+						if (this._selectedTags.length > 0) {
+							//this._map.eachLayer(
+							layerSource.mcg.eachLayer(
+								function(layer) {
+									if (
+										layer &&
+										layer.options &&
+										layer.options.tags
+									) {
+										totalCount++;
+										if (releatedLayers.indexOf(layer) == -1) {
+											var found = false;
+											for (
+												var i = 0; i < layer.options.tags.length; i++
+											) {
+												found =
+													this._selectedTags.indexOf(
+														layer.options.tags[i]
+													) !== -1;
+												if (found) {
+													break;
+												}
+											}
+											if (!found) {
+												removedMarkers.push(layer);
+											}
+										}
+									}
+								}.bind(this)
+							);
+
+							for (i = 0; i < removedMarkers.length; i++) {
+								//this._map.removeLayer(removedMarkers[i]);
+								this._invisibles.push(removedMarkers[i]);
+							}
+
+							// Batch remove from MCG
+							layerSource.mcg.removeLayers(removedMarkers);
+						}
+
+						return totalCount - removedMarkers.length;
+					},
+				},
+			});
+
+			this.layerSources.currentSource = this.layerSources.sources[
+				'mcg'
+			];
+		},
+	});
+
+	////////////////////////////////////////////////
+	// Fix for TagFilterButton
+	////////////////////////////////////////////////
+	L.Control.TagFilterButton.include({
+	    _prepareLayerSources: function() {
+	        this.layerSources = new Object();
+	        this.layerSources['sources'] = new Object();
+
+	        this.registerCustomSource({
+	            name: 'default',
+	            source: {
+	                hide: function() {
+	                    var releatedLayers = [];
+
+	                    for (var r = 0; r < this._releatedFilterButtons.length; r++) {
+	                        releatedLayers = releatedLayers.concat(
+	                            this._releatedFilterButtons[r].getInvisibles()
+	                        );
+	                    }
+
+	                    var toBeRemovedFromInvisibles = [],
+	                        i;
+
+	                    // "Fix": add var
+	                    for (var i = 0; i < this._invisibles.length; i++) {
+	                        if (releatedLayers.indexOf(this._invisibles[i]) == -1) {
+	                            // "Fix": add var
+	                            for (var j = 0; j < this._invisibles[i].options.tags.length; j++) {
+	                                if (
+	                                    this._selectedTags.length == 0 ||
+	                                    this._selectedTags.indexOf(
+	                                        this._invisibles[i].options.tags[j]
+	                                    ) !== -1
+	                                ) {
+	                                    this._map.addLayer(this._invisibles[i]);
+	                                    toBeRemovedFromInvisibles.push(i);
+	                                    break;
+	                                }
+	                            }
+	                        }
+	                    }
+
+	                    while (toBeRemovedFromInvisibles.length > 0) {
+	                        this._invisibles.splice(toBeRemovedFromInvisibles.pop(), 1);
+	                    }
+
+	                    var removedMarkers = [];
+	                    var totalCount = 0;
+
+	                    if (this._selectedTags.length > 0) {
+	                        this._map.eachLayer(
+	                            function(layer) {
+	                                if (layer && layer.options && layer.options.tags) {
+	                                    totalCount++;
+	                                    if (releatedLayers.indexOf(layer) == -1) {
+	                                        var found = false;
+	                                        for (var i = 0; i < layer.options.tags.length; i++) {
+	                                            found =
+	                                                this._selectedTags.indexOf(layer.options.tags[i]) !==
+	                                                -1;
+	                                            if (found) {
+	                                                break;
+	                                            }
+	                                        }
+	                                        if (!found) {
+	                                            removedMarkers.push(layer);
+	                                        }
+	                                    }
+	                                }
+	                            }.bind(this)
+	                        );
+
+	                        for (i = 0; i < removedMarkers.length; i++) {
+	                            this._map.removeLayer(removedMarkers[i]);
+	                            this._invisibles.push(removedMarkers[i]);
+	                        }
+	                    }
+
+	                    return totalCount - removedMarkers.length;
+	                },
+	            },
+	        });
+	        this.layerSources.currentSource = this.layerSources.sources['default'];
+	    },
 	});
 }

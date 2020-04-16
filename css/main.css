@@ -82,6 +82,50 @@ section {
 	font-weight: 200;
 }
 
+.leaflet-bar .tag-filter-tags-container ul {
+	border: none;
+	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+}
+
+.leaflet-bar .tag-filter-tags-container ul.header {
+	border-top: none;
+	border-bottom: 1px solid #5c878d;
+}
+
+.leaflet-bar .tag-filter-tags-container ul li {
+	background: #2f3c48;
+	border-bottom: 1px solid rgba(255,255,255,0.5);
+}
+
+.leaflet-bar .tag-filter-tags-container ul.header li {
+	background: #fff;
+	color: #5c878d;
+}
+
+.leaflet-bar .tag-filter-tags-container ul li[data-checked='checked'] {
+	background: #5c878d;
+}
+
+.leaflet-bar .tag-filter-tags-container ul li a {
+	color: rgba(255,255,255,0.5);
+}
+.leaflet-bar .tag-filter-tags-container ul li a:hover {
+	color: inherit;
+}
+.leaflet-bar .tag-filter-tags-container ul li:hover a {
+	color: #fff;
+}
+.leaflet-bar .tag-filter-tags-container ul li[data-checked='checked'] a {
+	color: #fff;
+}
+.leaflet-bar .tag-filter-tags-container ul.header li a {
+	color: #5c878d;
+}
+
+.leaflet-bar .tag-filter-tags-container .checkbox {
+	color: #fff;
+}
+
 .lds-ring {
 	display: block;
 	position: absolute;
