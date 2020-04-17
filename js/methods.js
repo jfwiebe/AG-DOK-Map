@@ -142,7 +142,7 @@ function getSheetData(sheetID, callback) {
 function getGeoJSONData(geoJSONPath, callback) {
 	$.getJSON(geoJSONPath,function(data){
 		callback(data);
-	}
+	});
 }
 
 function getCOVID19Data(callback) {
