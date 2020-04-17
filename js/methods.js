@@ -148,7 +148,7 @@ function getGeoJSONData(geoJSONPath, callback) {
 function getCOVID19Data(callback) {
 	$.getJSON('https://open-covid-19.github.io/data/data_latest.json',function(data){
 		callback(data);
-	}
+	});
 }
 
 function fixMCG() {
