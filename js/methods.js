@@ -27,7 +27,7 @@ function initMap() {
 		mapData = sheetData;
 		// Tags are already converted to an Array at mapData[0].tags
 		
-		$.getJSON(myGeoJSONPath,function(data){
+		getGeoJSONData(myGeoJSONPath, function(data){ 
 			map = L.map( 'filmClipMap', {
 				center: [51.0, 10.0],
 				minZoom: 3,
@@ -85,7 +85,8 @@ function initMap() {
 				data: listOfAllTags,
 				filterOnEveryClick: true,
 				clearText: 'Alle anzeigen',
-				icon: 'fa-tag'
+				icon: 'fa-tag',
+				openPopupOnHover: true
 			}).addTo( map );
 
 			map.addLayer(markers);
@@ -136,6 +137,18 @@ function getSheetData(sheetID, callback) {
 
 		callback(cleanData);
 	});
+}
+
+function getGeoJSONData(geoJSONPath, callback) {
+	$.getJSON(geoJSONPath,function(data){
+		callback(data);
+	}
+}
+
+function getCOVID19Data(callback) {
+	$.getJSON('https://open-covid-19.github.io/data/data_latest.json',function(data){
+		callback(data);
+	}
 }
 
 function fixMCG() {
