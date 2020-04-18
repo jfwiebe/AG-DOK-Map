@@ -1,6 +1,7 @@
+var map;
+
 function initMap() {
 	
-	var map;
 
 	var myIcon = L.ExtraMarkers.icon({
 		icon: 'fa-play-circle',
@@ -20,34 +21,33 @@ function initMap() {
 		fillOpacity: 1
 	};
 
-	getSheetData('1f4UpOnOj79hGxeu5AoDrkKRRD2RGxM9rEmwAhIw2XMM', function(sheetData) {
+	
+	getGeoJSONData(myGeoJSONPath, function(data){ 
+		map = L.map( 'filmClipMap', {
+			center: [51.0, 10.0],
+			minZoom: 3,
+			maxZoom: 8,
+			zoom: 6
+		});
 
-		//console.log(sheetData);
+		map.createPane('labels');
+		map.getPane('labels').style.pointerEvents = 'none';
 
-		mapData = sheetData;
-		// Tags are already converted to an Array at mapData[0].tags
-		
-		getGeoJSONData(myGeoJSONPath, function(data){ 
-			map = L.map( 'filmClipMap', {
-				center: [51.0, 10.0],
-				minZoom: 3,
-				maxZoom: 8,
-				zoom: 6
-			});
+		var myTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', {
+			attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+			subdomains: 'abcd',
+			pane: 'labels'
+		}).addTo(map);
 
-			map.createPane('labels');
-			map.getPane('labels').style.pointerEvents = 'none';
+		L.geoJson(data, {
+			clickable: false,
+			style: myCustomStyle
+		}).addTo(map);
 
-			var myTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}{r}.png', {
-				attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-				subdomains: 'abcd',
-				pane: 'labels'
-			}).addTo(map);
-
-			L.geoJson(data, {
-				clickable: false,
-				style: myCustomStyle
-			}).addTo(map);
+		getSheetData('1f4UpOnOj79hGxeu5AoDrkKRRD2RGxM9rEmwAhIw2XMM', function(sheetData) {
+			
+			mapData = sheetData;
+			// Tags are already converted to an Array at mapData[0].tags
 
 			var markers = L.markerClusterGroup();
 			var listOfAllTags = [];
@@ -84,9 +84,9 @@ function initMap() {
 			tagFilterButton = L.control.tagFilterButton({
 				data: listOfAllTags,
 				filterOnEveryClick: true,
-				clearText: 'Alle anzeigen',
+				clearText: 'Filter zurücksetzen',
 				icon: 'fa-tag',
-				openPopupOnHover: true
+				openPopupOnHover: false
 			}).addTo( map );
 
 			map.addLayer(markers);
@@ -96,8 +96,47 @@ function initMap() {
 			L.DomEvent.disableScrollPropagation(tagFilterButton._container);
 			L.DomEvent.disableClickPropagation(tagFilterButton._container);
 
+			getCOVID19Data(function(COVID19Data) {
+				console.log(COVID19Data);
+
+				var COVID19Markers = L.layerGroup();
+
+				for (var c=0; c < COVID19Data.length; c++) {
+					
+					//console.log(COVID19Data[c].Latitude, COVID19Data[c].Longitude);
+
+					if (COVID19Data[c].Latitude && COVID19Data[c].Longitude) {
+						
+						var isRegional = (COVID19Data[c].RegionName) ? true : false;
+						var regionName = (isRegional) ? COVID19Data[c].RegionName : '';
+						var circleRadius = calculateCircleRadius(COVID19Data[c].Confirmed, isRegional);
+
+						var marker = L.circleMarker( [COVID19Data[c].Latitude, COVID19Data[c].Longitude], {
+							radius: circleRadius,
+							stroke: false,
+							color: '#ff0000',
+							fillOpacity: .13
+						});
+
+						marker.bindPopup('<div>'+ COVID19Data[c].CountryName + '</div>'
+										+'<div>'+ regionName +'</div>'
+										+'<div>Bestätigte Fälle: '+ COVID19Data[c].Confirmed +'</div>', {
+							minWidth: 200,
+							maxWidth: 350,
+							maxHeight: 600
+						});
+
+						marker.addTo(COVID19Markers);
+					}
+
+				}
+
+				map.addLayer(COVID19Markers);
+			});
+
 			$('.lds-ring').hide();
 		});
+		
 	});
 	
 	
@@ -146,9 +185,19 @@ function getGeoJSONData(geoJSONPath, callback) {
 }
 
 function getCOVID19Data(callback) {
-	$.getJSON('https://open-covid-19.github.io/data/data_latest.json',function(data){
+	
+	//var dataSource = 'https://api.covid19api.com/summary';
+	var dataSource = 'https://open-covid-19.github.io/data/data_latest.json';
+
+	$.getJSON(dataSource,function(data){
 		callback(data);
 	});
+}
+
+function calculateCircleRadius(caseNumber, regional) {
+	var scaleFactor = (regional) ? 0.02 : 0.01;
+	var area = caseNumber * scaleFactor;
+	return Math.sqrt(area/Math.PI)*2;			
 }
 
 function fixMCG() {
