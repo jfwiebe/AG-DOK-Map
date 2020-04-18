@@ -18,6 +18,32 @@ header {
 	color: #fff !important;
 }
 
+#navbarResponsive {
+	flex-grow: 0;
+}
+
+.socialContainer {
+	display: flex;
+	margin-right: 20px;
+	flex-grow: 1;
+	text-align: right;
+	flex-direction: row-reverse;
+	font-size: 20px;
+}
+
+.socialContainer a {
+	float: right;
+	display: block;
+	margin-left: 20px;
+	cursor: pointer;
+	color: rgba(255,255,255,0.5);
+}
+
+.socialContainer a:hover {
+	color: #fff;
+	color: rgba(255,255,255,0.75);
+}
+
 section {
   padding: 150px 0;
   color: #ffffff;
