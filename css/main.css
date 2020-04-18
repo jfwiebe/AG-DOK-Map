@@ -126,6 +126,35 @@ section {
 	color: #fff;
 }
 
+.easy-button-button::before {
+	content: '';
+	display: block;
+	width: 0;
+	height: 0;
+	position: absolute;
+	border-top: 8px solid transparent;
+	border-bottom: 8px solid transparent;
+	border-right: 8px solid rgba(92, 143, 148, 0.7);
+	left: 33px;
+	top: 7px;
+}
+
+.easy-button-button::after {
+	content: 'Filme nach Tags filtern';
+	position: absolute;
+	top: 50%;
+	left: 41px;
+	display: block;
+	white-space: nowrap;
+	background: rgba(92, 143, 148, 0.7);
+	line-height: 22px;
+	padding: 4px 8px;
+	margin-top: -15px;
+	color: #fff;
+	border-radius: 5px;
+	font-size: 15px;
+}
+
 .lds-ring {
 	display: block;
 	position: absolute;
@@ -135,6 +164,7 @@ section {
 	left: 50%;
 	margin-top: -40px;
 	margin-left: -40px;
+	z-index: 1000000;
 }
 .lds-ring div {
 	box-sizing: border-box;
