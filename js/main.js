@@ -1,4 +1,5 @@
-var mapData,
+var map,
+	mapData,
 	tagFilterButton;
 
 (function($) {

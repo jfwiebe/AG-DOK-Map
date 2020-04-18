@@ -1,5 +1,3 @@
-var map;
-
 function initMap() {
 	
 
@@ -88,6 +86,10 @@ function initMap() {
 				icon: 'fa-tag',
 				openPopupOnHover: false
 			}).addTo( map );
+
+			$(tagFilterButton._easyButton.button).click(function() {
+				$(this).addClass('hideHint');
+			});
 
 			map.addLayer(markers);
 

@@ -107,7 +107,7 @@
 	color: #fff;
 }
 
-.easy-button-button::before {
+.easy-button-button:not(.hideHint)::before {
 	content: '';
 	display: block;
 	width: 0;
@@ -120,7 +120,7 @@
 	top: 7px;
 }
 
-.easy-button-button::after {
+.easy-button-button:not(.hideHint)::after {
 	content: 'Filme nach Tags filtern';
 	position: absolute;
 	top: 50%;
