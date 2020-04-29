@@ -24,7 +24,7 @@ function initMap() {
 		map = L.map( 'filmClipMap', {
 			center: [51.0, 10.0],
 			minZoom: 3,
-			maxZoom: 8,
+			maxZoom: 12,
 			zoom: 6
 		});
 
