@@ -82,7 +82,7 @@ function initMap() {
 			tagFilterButton = L.control.tagFilterButton({
 				data: listOfAllTags,
 				filterOnEveryClick: true,
-				clearText: 'Filter zurücksetzen',
+				clearText: 'Reset All Filters',
 				icon: 'fa-tag',
 				openPopupOnHover: false
 			}).addTo( map );

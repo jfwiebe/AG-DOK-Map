@@ -121,7 +121,7 @@
 }
 
 .easy-button-button:not(.hideHint)::after {
-	content: 'Filme nach Tags filtern';
+	content: 'Filter Movies by Tags';
 	position: absolute;
 	top: 50%;
 	left: 41px;
