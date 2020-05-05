@@ -4,6 +4,7 @@
 	left: 0px;
 	height: calc(100% - 56px);
 	width: 100%;
+	z-index: 1;
 }
 
 #filmClipMap {

@@ -44,6 +44,62 @@ header {
 	color: rgba(255,255,255,0.75);
 }
 
+#introText {
+	position: absolute;
+	top: 66px;
+	right: 10px;
+	height: auto;
+	max-height: calc(100% - 96px);
+	width: 70%;
+	z-index: 1025;
+	overflow: auto;
+	background: rgba(35, 42, 44, .8);
+	color: #fff;
+	border: 1px solid rgba(255,255,255,.5);
+	box-sizing: border-box;
+	padding: 20px;
+}
+
+@media (min-width: 1200px) and (max-width: 2000px) {
+	#introText {
+		width: 40%;
+	}
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+	#introText {
+		width: 50%;
+	}
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+	#introText {
+		width: 70%;
+	}
+}
+
+@media (max-width: 768px) {
+	#introText {
+		width: calc(100% - 20px);
+	}
+}
+
+#introText a, #introText a:hover, #introText a:focus {
+	text-decoration: underline;
+	color: #fff;
+}
+
+#introCloseButton {
+	position: absolute;
+	top: 85px;
+	right: 30px;
+	font-size: 24px;
+	line-height: 24px;
+	z-index: 1026;
+	color: #fff;
+	cursor: pointer;
+}
+
 section {
   padding: 150px 0;
   color: #ffffff;
