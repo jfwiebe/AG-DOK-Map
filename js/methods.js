@@ -99,7 +99,7 @@ function initMap() {
 			L.DomEvent.disableClickPropagation(tagFilterButton._container);
 
 			getCOVID19Data(function(COVID19Data) {
-				console.log(COVID19Data);
+				//console.log(COVID19Data);
 
 				var COVID19Markers = L.layerGroup();
 
@@ -160,7 +160,9 @@ function getSheetData(sheetID, callback) {
 			if (vimeoURLParts && vimeoURLParts[4]) {
 				videoEmbedURL = '//player.vimeo.com/video/' + vimeoURLParts[4];
 			}
-
+			
+			var tags = (rows[i]['gsx$tagsen']['$t'].length > 2) ? rows[i]['gsx$tagsen']['$t'].toLowerCase().replace(/\s/g, '').replace(/,*$/, "").split(',') : []
+			
 			var rowData = {
 				'name': rows[i]['gsx$name']['$t'],
 				'nameShort': rows[i]['gsx$nameshort']['$t'],
@@ -171,9 +173,13 @@ function getSheetData(sheetID, callback) {
 				'location': rows[i]['gsx$location']['$t'],
 				'longitude': parseFloat(rows[i]['gsx$longitude']['$t'].replace(',', '.')),
 				'latitude': parseFloat(rows[i]['gsx$latitude']['$t'].replace(',', '.')),
-				'tags': rows[i]['gsx$tagsen']['$t'].toLowerCase().replace(' ', '').split(',')
+				'tags': tags
 			}
-			cleanData.push(rowData);
+
+			if (isLatitude(rowData.latitude) && isLongitude(rowData.longitude)) {
+				cleanData.push(rowData);
+				//console.log(rowData.tags);
+			}
 		}
 
 		callback(cleanData);
@@ -394,4 +400,16 @@ function fixMCG() {
 	        this.layerSources.currentSource = this.layerSources.sources['default'];
 	    },
 	});
+}
+
+function isLatitude(maybeLat) {
+	var latF = parseFloat(maybeLat)
+	if (isNaN(latF)) return false
+	return (latF >= -90 && latF <= 90)
+}
+
+function isLongitude(maybeLon) {
+	var lonF = parseFloat(maybeLon)
+	if (isNaN(lonF)) return false
+	return lonF >= -180 && lonF <= 180
 }
