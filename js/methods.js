@@ -161,7 +161,28 @@ function getSheetData(sheetID, callback) {
 				videoEmbedURL = '//player.vimeo.com/video/' + vimeoURLParts[4];
 			}
 			
-			var tags = (rows[i]['gsx$tagsen']['$t'].length > 2) ? rows[i]['gsx$tagsen']['$t'].toLowerCase().replace(/\s/g, '').replace(/,*$/, "").split(',') : []
+			var tags = [];
+			if (rows[i]['gsx$tagsen1']['$t'].length > 2) {
+				var newTag = rows[i]['gsx$tagsen1']['$t'].toLowerCase().replace(/\s/g, '').replace(/,*$/, "");
+				tags.push(newTag);
+			}
+			if (rows[i]['gsx$tagsen2']['$t'].length > 2) {
+				var newTag = rows[i]['gsx$tagsen2']['$t'].toLowerCase().replace(/\s/g, '').replace(/,*$/, "");
+				tags.push(newTag);
+			}
+			if (rows[i]['gsx$tagsen3']['$t'].length > 2) {
+				var newTag = rows[i]['gsx$tagsen3']['$t'].toLowerCase().replace(/\s/g, '').replace(/,*$/, "");
+				tags.push(newTag);
+			}
+			if (rows[i]['gsx$tagsen4']['$t'].length > 2) {
+				var newTag = rows[i]['gsx$tagsen4']['$t'].toLowerCase().replace(/\s/g, '').replace(/,*$/, "");
+				tags.push(newTag);
+			}
+			if (rows[i]['gsx$tagsen5']['$t'].length > 2) {
+				var newTag = rows[i]['gsx$tagsen5']['$t'].toLowerCase().replace(/\s/g, '').replace(/,*$/, "");
+				tags.push(newTag);
+			}
+			//var tags = (rows[i]['gsx$tagsen']['$t'].length > 2) ? rows[i]['gsx$tagsen']['$t'].toLowerCase().replace(/\s/g, '').replace(/,*$/, "").split(',') : []
 			
 			var rowData = {
 				'name': rows[i]['gsx$name']['$t'],
