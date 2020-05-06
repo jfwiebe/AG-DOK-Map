@@ -22,3 +22,7 @@ pids
 *.webm
 *.mov
 *.mpg
+
+# current git version file
+# use with git log --pretty=format:'%h' -n 1 > gitversion
+gitversion
