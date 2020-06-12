@@ -122,7 +122,7 @@ function initMap() {
 
 						marker.bindPopup('<div>'+ COVID19Data[c].CountryName + '</div>'
 										+'<div>'+ regionName +'</div>'
-										+'<div>Bestätigte Fälle: '+ COVID19Data[c].Confirmed +'</div>', {
+										+'<div>Confirmed Cases: '+ COVID19Data[c].Confirmed +'</div>', {
 							minWidth: 200,
 							maxWidth: 350,
 							maxHeight: 600
