@@ -42,7 +42,7 @@ function initMap() {
 			style: myCustomStyle
 		}).addTo(map);
 
-		getSheetData('1f4UpOnOj79hGxeu5AoDrkKRRD2RGxM9rEmwAhIw2XMM', function(sheetData) {
+		getSheetData(null, function(sheetData) {
 			
 			mapData = sheetData;
 			// Tags are already converted to an Array at mapData[0].tags
@@ -67,11 +67,13 @@ function initMap() {
 				} 
 
 				marker.bindPopup('<div class="markerTitle">'+ mapData[i].title + '</div>'
-								+'<iframe style="width: 350px; height: 200px; background: #000;" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen src="'+ mapData[i].videoEmbedURL +'?color=ffffff&portrait=0&byline=0&title=0&badge=0"></iframe>'
-								+'<div><a href="'+ mapData[i].videoURL +'" target="_blank">Video in neuem Tab ansehen</a></div>'
-								+'<div>von '+ mapData[i].name +'</div>'
-								+'<div>Ort: '+ mapData[i].location +'</div>'
-								+'<div class="tagListContainer">Tags: <br>'+ tagList +'</div>', {
+								+'<iframe style="width: 350px; height: 200px; background: #000;" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen src="'+ mapData[i].videoEmbedURL +'"></iframe>'
+								+'<div><a href="'+ mapData[i].videoURL +'" target="_blank">View Video in New Tab</a></div>'
+								+'<div>'+ mapData[i].description +'</div>'
+								+'<hr>'
+								+'<div>by <b>'+ mapData[i].name +'</b></div>'
+								+'<div>at <b>'+ mapData[i].location +'</b></div>'
+								+'<div class="tagListContainer">'+ tagList +'</div>', {
 					minWidth: 200,
 					maxWidth: 350,
 					maxHeight: 600
@@ -145,55 +147,81 @@ function initMap() {
 }
 
 function getSheetData(sheetID, callback) {
-	$.getJSON('https://spreadsheets.google.com/feeds/list/'+ sheetID +'/od6/public/values?alt=json',function(data){
-		var cleanData = [];
+	
+	if (!sheetID) {
+		$url = 'film-data.json';
+	} else {
+		$url = 'https://spreadsheets.google.com/feeds/list/'+ sheetID +'/od6/public/values?alt=json';
+	}
 
-		var rows = data.feed.entry;
+	$.getJSON($url,function(data){
+		var cleanData = [],
+			rows;
 
-		//console.log(rows);
-
+		if (!sheetID) {
+			rows = data;
+		} else {
+			rows = data.feed.entry;
+		}
+		
 		for (var i = 0; i < rows.length; i++) {
 			
-			var vimeoURLParts = /^(http\:\/\/|https\:\/\/)?(www\.)?(vimeo\.com\/)([0-9]+)$/.exec(rows[i]['gsx$vimeolink']['$t']),
+			var vimeoURLParts = /^(http\:\/\/|https\:\/\/)?(www\.)?(vimeo\.com\/)([0-9]+)$/.exec(rows[i]['gsx$embedyourfilmwithavimeolinkrecommended']['$t']),
+				youtubeURLParts = [ /youtube\.com\/watch\?v=([^\&\?\/]+)/,
+                                    /youtube\.com\/embed\/([^\&\?\/]+)/,
+                                    /youtube\.com\/v\/([^\&\?\/]+)/,
+                                    /youtu\.be\/([^\&\?\/]+)/ ],
 				videoEmbedURL = '//';
 
 			if (vimeoURLParts && vimeoURLParts[4]) {
-				videoEmbedURL = '//player.vimeo.com/video/' + vimeoURLParts[4];
+				videoEmbedURL = '//player.vimeo.com/video/'+ vimeoURLParts[4] +'?color=ffffff&portrait=0&byline=0&title=0&badge=0';
+			} else {
+				for (var p in youtubeURLParts) {
+	                var res = youtubeURLParts[p].exec(rows[i]['gsx$embedyourfilmwithayoutubelink']['$t']);
+	                console.log(res);
+	                if (res !== null) {
+	                    var timeCode = /t=([0-9]*)/.exec(rows[i]['gsx$embedyourfilmwithayoutubelink']['$t']),
+	                        tcString = (timeCode) ? '?rel=0&theme=light&color=white&showinfo=0&modestbranding=1&autohide=1&start='+ timeCode[1] : '?rel=0&theme=light&color=white&showinfo=0&modestbranding=1&autohide=1';
+	                    videoEmbedURL = '//www.youtube.com/embed/' + res[1] + tcString;
+	                    console.log(videoEmbedURL);
+	                    break;
+	                }
+	            }
 			}
-			
+
 			var tags = [];
-			if (rows[i]['gsx$tagsen1']['$t'].length > 2) {
-				var newTag = rows[i]['gsx$tagsen1']['$t'].toLowerCase().replace(/\s/g, '').replace(/,*$/, "");
+			if (rows[i]['gsx$tag1_2']['$t'].length > 2) {
+				var newTag = rows[i]['gsx$tag1_2']['$t'].toLowerCase().replace(/\s/g, '').replace(/,*$/, "");
 				tags.push(newTag);
 			}
-			if (rows[i]['gsx$tagsen2']['$t'].length > 2) {
-				var newTag = rows[i]['gsx$tagsen2']['$t'].toLowerCase().replace(/\s/g, '').replace(/,*$/, "");
+			if (rows[i]['gsx$tag2_2']['$t'].length > 2) {
+				var newTag = rows[i]['gsx$tag2_2']['$t'].toLowerCase().replace(/\s/g, '').replace(/,*$/, "");
 				tags.push(newTag);
 			}
-			if (rows[i]['gsx$tagsen3']['$t'].length > 2) {
-				var newTag = rows[i]['gsx$tagsen3']['$t'].toLowerCase().replace(/\s/g, '').replace(/,*$/, "");
+			if (rows[i]['gsx$tag3_2']['$t'].length > 2) {
+				var newTag = rows[i]['gsx$tag3_2']['$t'].toLowerCase().replace(/\s/g, '').replace(/,*$/, "");
 				tags.push(newTag);
 			}
-			if (rows[i]['gsx$tagsen4']['$t'].length > 2) {
-				var newTag = rows[i]['gsx$tagsen4']['$t'].toLowerCase().replace(/\s/g, '').replace(/,*$/, "");
+			if (rows[i]['gsx$tag4_2']['$t'].length > 2) {
+				var newTag = rows[i]['gsx$tag4_2']['$t'].toLowerCase().replace(/\s/g, '').replace(/,*$/, "");
 				tags.push(newTag);
 			}
-			if (rows[i]['gsx$tagsen5']['$t'].length > 2) {
-				var newTag = rows[i]['gsx$tagsen5']['$t'].toLowerCase().replace(/\s/g, '').replace(/,*$/, "");
+			if (rows[i]['gsx$tag5_2']['$t'].length > 2) {
+				var newTag = rows[i]['gsx$tag5_2']['$t'].toLowerCase().replace(/\s/g, '').replace(/,*$/, "");
 				tags.push(newTag);
 			}
 			//var tags = (rows[i]['gsx$tagsen']['$t'].length > 2) ? rows[i]['gsx$tagsen']['$t'].toLowerCase().replace(/\s/g, '').replace(/,*$/, "").split(',') : []
 			
 			var rowData = {
-				'name': rows[i]['gsx$name']['$t'],
-				'nameShort': rows[i]['gsx$nameshort']['$t'],
-				'title': rows[i]['gsx$filmtitle']['$t'],
-				'videoURL': rows[i]['gsx$vimeolink']['$t'],
+				'name': rows[i]['gsx$yournameastheauthorcreatorofthefilm']['$t'],
+				'title': rows[i]['gsx$yourfilmstitle']['$t'],
+				'videoURL': (rows[i]['gsx$embedyourfilmwithavimeolinkrecommended']['$t'].length > 0) ? rows[i]['gsx$embedyourfilmwithavimeolinkrecommended']['$t'] : rows[i]['gsx$embedyourfilmwithayoutubelink']['$t'],
 				'videoEmbedURL': videoEmbedURL,
-				'date': new Date(rows[i]['gsx$date']['$t']+ 'T' +rows[i]['gsx$time']['$t'] + ':00Z'),
-				'location': rows[i]['gsx$location']['$t'],
-				'longitude': parseFloat(rows[i]['gsx$longitude']['$t'].replace(',', '.')),
-				'latitude': parseFloat(rows[i]['gsx$latitude']['$t'].replace(',', '.')),
+				'date': rows[i]['gsx$dateofyourfilm']['$t'],
+				'location': rows[i]['gsx$filminglocation']['$t'],
+				'longitude': parseFloat(rows[i]['gsx$threestepstocreatethegeolocationofyourfilm']['$t'].split(',')[1].replace(' ', '').replace(',', '.')),
+				'latitude': parseFloat(rows[i]['gsx$threestepstocreatethegeolocationofyourfilm']['$t'].split(',')[0].replace(' ', '').replace(',', '.')),
+				'description': rows[i]['gsx$addashortdescriptionofyourfilm750characters']['$t'],
 				'tags': tags
 			}
 
