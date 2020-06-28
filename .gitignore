@@ -26,3 +26,9 @@ pids
 # current git version file
 # use with git log --pretty=format:'%h' -n 1 > gitversion
 gitversion
+
+# film data is written by get-gsheet-json.php
+film-data.json
+
+# secret for filmdata
+inc.filmdata.php
