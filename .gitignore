@@ -32,3 +32,4 @@ film-data.json
 
 # secret for filmdata
 inc.filmdata.php
+images/user-content/*
