@@ -69,7 +69,7 @@ function initMap() {
 				var contentURL,
 					contentString;
 				if (mapData[i].videoURL && mapData[i].videoURL.length > 3) {
-					contentURL = mapData[i].videoURL;
+					contentURL = mapData[i].videoEmbedURL;
 					contentString = '<iframe style="width: 350px; height: 200px; background: #000;" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen src="'+ contentURL +'"></iframe>';
 				} else {
 					contentURL = mapData[i].imageURL;
