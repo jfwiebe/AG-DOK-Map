@@ -91,6 +91,7 @@ function initMap() {
 				marker.addTo(markers);
 			}
 
+			/*
 			tagFilterButton = L.control.tagFilterButton({
 				data: listOfAllTags,
 				filterOnEveryClick: true,
@@ -102,13 +103,16 @@ function initMap() {
 			$(tagFilterButton._easyButton.button).click(function() {
 				$(this).addClass('hideHint');
 			});
+			*/
 
 			map.addLayer(markers);
 
+			/*
 			tagFilterButton.enableMCG(markers);
 
 			L.DomEvent.disableScrollPropagation(tagFilterButton._container);
 			L.DomEvent.disableClickPropagation(tagFilterButton._container);
+			*/
 
 			/*
 			getCOVID19Data(function(COVID19Data) {
@@ -147,8 +151,8 @@ function initMap() {
 				}
 
 				map.addLayer(COVID19Markers);
-				*/
 			});
+			*/
 
 			$('.lds-ring').hide();
 		});
