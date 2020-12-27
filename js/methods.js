@@ -66,9 +66,19 @@ function initMap() {
 					}
 				} 
 
+				var contentURL,
+					contentString;
+				if (mapData[i].videoURL && mapData[i].videoURL.length > 3) {
+					contentURL = mapData[i].videoURL;
+					contentString = '<iframe style="width: 350px; height: 200px; background: #000;" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen src="'+ contentURL +'"></iframe>';
+				} else {
+					contentURL = mapData[i].imageURL;
+					contentString = '<img style="display: block; width: 100%;" src="'+ contentURL +'" />';
+				}
+				
 				marker.bindPopup('<div class="markerTitle">'+ mapData[i].title + '</div>'
-								+'<iframe style="width: 350px; height: 200px; background: #000;" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen src="'+ mapData[i].videoEmbedURL +'"></iframe>'
-								+'<div><a href="'+ mapData[i].videoURL +'" target="_blank">View Video in New Tab</a></div>'
+								+ contentString
+								+'<div><a href="'+ contentURL +'" target="_blank">View Content in New Tab</a></div>'
 								+'<div>'+ mapData[i].description +'</div>'
 								+'<hr>'
 								+'<div>by <b>'+ mapData[i].name +'</b></div>'
@@ -217,6 +227,7 @@ function getSheetData(sheetID, callback) {
 				'title': rows[i]['gsx$yourfilmstitle']['$t'],
 				'videoURL': (rows[i]['gsx$embedyourfilmwithavimeolinkrecommended']['$t'].length > 0) ? rows[i]['gsx$embedyourfilmwithavimeolinkrecommended']['$t'] : rows[i]['gsx$embedyourfilmwithayoutubelink']['$t'],
 				'videoEmbedURL': videoEmbedURL,
+				'imageURL': 'https://showyourrc3.sandratrostel.de/images/user-content/' + rows[i]['gsx$imagefilename']['$t'],
 				'date': rows[i]['gsx$dateofyourfilm']['$t'],
 				'location': rows[i]['gsx$filminglocation']['$t'],
 				'longitude': parseFloat(rows[i]['gsx$threestepstocreatethegeolocationofyourfilm']['$t'].split(',')[1].replace(' ', '').replace(',', '.')),
