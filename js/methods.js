@@ -110,6 +110,7 @@ function initMap() {
 			L.DomEvent.disableScrollPropagation(tagFilterButton._container);
 			L.DomEvent.disableClickPropagation(tagFilterButton._container);
 
+			/*
 			getCOVID19Data(function(COVID19Data) {
 				//console.log(COVID19Data);
 
@@ -146,6 +147,7 @@ function initMap() {
 				}
 
 				map.addLayer(COVID19Markers);
+				*/
 			});
 
 			$('.lds-ring').hide();
